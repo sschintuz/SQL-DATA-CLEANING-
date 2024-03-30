@@ -4,7 +4,7 @@ SELECT
 FROM
     tempe_housing_data.tempe_housing;
 
--- 	STANDARDIZED DATEdf
+-- 	STANDARDIZED DATE
 SELECT 
     SaleDate, CONVERT( SaleDate , DATE) Date
 FROM
