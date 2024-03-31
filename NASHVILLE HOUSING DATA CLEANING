@@ -1,28 +1,27 @@
-
 SELECT 
     *
 FROM
-    tempe_housing_data.tempe_housing;
+    nashville_housing_data.nashville_housing;
 
--- 	STANDARDIZED DATE
+-- STANDARDIZED DATE
 SELECT 
     SaleDate, CONVERT( SaleDate , DATE) Date
 FROM
-    tempe_housing;
+    nashville_housing;
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     SaleDate = CONVERT( SaleDate , DATE);
 
--- 	POPULATE PROPERTY ADDRESS 
-UPDATE tempe_housing 
+-- POPULATE PROPERTY ADDRESS 
+UPDATE nashville_housing 
 SET 
     PropertyAddress = NULLIF(propertyAddress, '''');
 
 SELECT 
     *
 FROM
-    tempe_housing
+    nashville_housing
 ORDER BY ParcelID;
 
 SELECT 
@@ -32,28 +31,28 @@ SELECT
     b.PropertyAddress,
     IFNULL(a.PropertyAddress, b.PropertyAddress)
 FROM
-    tempe_housing a
+    nashville_housing a
         JOIN
-    tempe_housing b ON a.ParcelID = b.ParcelID
+    nashville_housing b ON a.ParcelID = b.ParcelID
         AND a.UniqueID <> b.UniqueID
 WHERE
     a.PropertyAddress IS NULL;
 
-UPDATE tempe_housing a
+UPDATE nashville_housing a
         JOIN
-    tempe_housing b ON a.ParcelID = b.ParcelID
+    nashville_housing b ON a.ParcelID = b.ParcelID
         AND a.UniqueID <> b.UniqueID 
 SET 
     a.PropertyAddress = IFNULL(a.PropertyAddress, b.PropertyAddress)
 WHERE
     a.PropertyAddress IS NULL;
 
--- 	BREAKING OUT ADDRESSES INTO INDIVIDUAL COLUMNS (ADDRESS, CITY,STATE)
+-- BREAKING OUT ADDRESSES INTO INDIVIDUAL COLUMNS (ADDRESS, CITY, STATE)
 
 SELECT 
     PropertyAddress
 FROM
-    tempe_housing
+    nashville_housing
 ORDER BY ParcelID;
 
 SELECT 
@@ -63,34 +62,34 @@ SELECT
     SUBSTRING(PropertyAddress,
         POSITION(',' IN PropertyAddress) + 1) State
 FROM
-    tempe_housing;
+    nashville_housing;
 
-ALTER TABLE tempe_housing
+ALTER TABLE nashville_housing
 ADD Address VARCHAR(255);
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     Address = SUBSTRING(PropertyAddress,
         1,
         POSITION(',' IN PropertyAddress) - 1);
 
-ALTER TABLE tempe_housing
+ALTER TABLE nashville_housing
 ADD City VARCHAR(255);
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     City = SUBSTRING(PropertyAddress,
         POSITION(',' IN PropertyAddress) + 1);
 
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     OwnerAddress = NULLIF(OwnerAddress, '''');
- 
+
 SELECT 
     OwnerAddress
 FROM
-    tempe_housing;
+    nashville_housing;
 
 SELECT 
     OwnerAddress,
@@ -100,38 +99,38 @@ SELECT
             - 1),
     SUBSTRING_INDEX(OwnerAddress, ',', - 1)
 FROM
-    tempe_housing;
+    nashville_housing;
 
-ALTER TABLE tempe_housing
+ALTER TABLE nashville_housing
 ADD OwnerADress VARCHAR(255);
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     OwnerADress = SUBSTRING_INDEX(OwnerAddress, ',', 1);
 
-ALTER TABLE tempe_housing
+ALTER TABLE nashville_housing
 ADD OwnerCity VARCHAR(255);
  
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     OwnerCity = SUBSTRING_INDEX(SUBSTRING_INDEX(OwnerAddress, ',', 2),
             ',',
             - 1);
 
-ALTER TABLE tempe_housing
+ALTER TABLE nashville_housing
 ADD OwnerState VARCHAR(255);
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     OwnerState = SUBSTRING_INDEX(OwnerAddress, ',', - 1);
 
 
--- 	CHANGE Y AND N TO YES AND NO IN "SOLD AS VACANT FIELD"
+-- CHANGE Y AND N TO YES AND NO IN "SOLD AS VACANT FIELD"
 
 SELECT DISTINCT
     SoldAsVacant, COUNT(SoldAsVacant)
 FROM
-    tempe_housing
+    nashville_housing
 GROUP BY SoldAsVacant;
 
 SELECT 
@@ -144,9 +143,9 @@ SELECT
         ELSE 'SoldAsVacant'
     END
 FROM
-    tempe_housing;
+    nashville_housing;
 
-UPDATE tempe_housing 
+UPDATE nashville_housing 
 SET 
     SoldAsVacant = CASE
         WHEN SoldAsVacant = 'Y' THEN 'Yes'
@@ -156,12 +155,12 @@ SET
         ELSE 'SoldAsVacant'
     END;
 
--- 	REMOVE DUPLICATES
+-- REMOVE DUPLICATES
 
 CREATE TEMPORARY TABLE Duplicate_values AS(
 SELECT *, ROW_NUMBER() OVER(PARTITION BY 
-	ParcelID, PropertyAddress,SaleDate,SalePrice,LegalReference ORDER BY UniqueID) RN
-FROM tempe_housing
+    ParcelID, PropertyAddress,SaleDate,SalePrice,LegalReference ORDER BY UniqueID) RN
+FROM nashville_housing
 ORDER BY ParcelID);
 
 DELETE FROM Duplicate_values 
@@ -181,7 +180,7 @@ WHERE
 SELECT 
     *
 FROM
-    tempe_housing;
+    nashville_housing;
 
-ALTER TABLE tempe_housing
-DROP COLUMN PropertyAddress, DROP COLUMN OwnerAddress, DROP COLUMN TaxDistrict
+ALTER TABLE nashville_housing
+DROP COLUMN PropertyAddress, DROP COLUMN OwnerAddress, DROP COLUMN TaxDistrict;
