@@ -1,4 +1,6 @@
-This repository hosts a collection of SQL scripts designed to handle Nashville housing dataset cleaning, transformation, and analysis. The dataset includes property sales details such as addresses, sale dates, prices, etc. The scripts aim to:
+This repository hosts a collection of SQL scripts designed to handle Nashville housing dataset cleaning, transformation, and analysis. The dataset includes property sales details such as addresses, sale dates, prices, etc. 
+
+The scripts aim to:
 
 1. Standardize Date Formats: Ensure consistency by converting various date formats to a uniform MySQL date format.
 2. Fill Missing Data: Address missing property addresses by utilizing data from other records.
